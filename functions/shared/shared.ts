@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT-0
 
 import { CloudFrontHeaders } from "aws-lambda";
-import { readFileSync } from "fs";
 import { createHmac } from "crypto";
 import { parse } from "cookie";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
@@ -64,7 +63,7 @@ interface ConfigFromDisk {
   logLevel: keyof typeof LogLevel;
 }
 
-interface CompleteConfigFromDisk extends ConfigFromDisk {
+export interface CompleteConfigFromDisk extends ConfigFromDisk {
   userPoolArn: string;
   clientId: string;
   oauthScopes: string[];
@@ -150,8 +149,8 @@ export interface CompleteConfig extends Config, CompleteConfigFromDisk {
 
 export function getConfig(): Config {
   return {
-    cloudFrontHeaders: asCloudFrontHeaders(config.httpHeaders),
-    logger: new Logger(LogLevel[config.logLevel]),
+    cloudFrontHeaders: asCloudFrontHeaders(configuration.httpHeaders),
+    logger: new Logger(LogLevel[configuration.logLevel]),
     ...configuration,
   };
 }

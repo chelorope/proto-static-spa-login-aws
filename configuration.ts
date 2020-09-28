@@ -1,4 +1,6 @@
-export default {
+import { CompleteConfigFromDisk } from "./functions/shared/shared";
+
+const test: CompleteConfigFromDisk = {
   userPoolArn:
     "arn:aws:cognito-idp:us-east-1:983532122716:userpool/us-east-1_nuIlGxEzI",
   clientId: "4jrgkmajnlhv42mprj3mq2197d",
@@ -16,10 +18,10 @@ export default {
   redirectPathSignOut: "/",
   redirectPathAuthRefresh: "/refreshauth",
   cookieSettings: {
-    idToken: null,
-    accessToken: null,
-    refreshToken: null,
-    nonce: null,
+    idToken: "",
+    accessToken: "",
+    refreshToken: "",
+    nonce: "",
   },
   mode: "spaMode",
   httpHeaders: {
@@ -36,3 +38,5 @@ export default {
   cookieCompatibility: "amplify",
   additionalCookies: {},
 };
+
+export default test;

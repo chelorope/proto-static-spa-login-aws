@@ -37,13 +37,61 @@ provider:
   region: us-east-1
   profile: ${env:AWS_PROFILE_NAME} # ~/.aws/credentials - https://www.serverless.com/framework/docs/providers/aws/guide/credentials/#setup-with-the-aws-cli
   role: lambdaTweetsFlowRole
-  deploymentBucket:
-    name: ${self:custom.global_vars.DEPLOYMENT_BUCKET_NAME}
+  # deploymentBucket:
+  #   name: ${self:custom.global_vars.DEPLOYMENT_BUCKET_NAME}
 
 functions:
-  unsupportedRedirectUserRequest:
+  checkAuth:
     handler: functions/check-auth.handler
-    name: ${self:custom.stage}-lambda-user-request-unsupported-redirect
+    name: ${self:custom.stage}-lambda-check-auth
+    memorySize: 128
+    timeout: 5
+    role: lambdaEdgeRole
+    # events:
+    #   - preExistingCloudFront:
+    #       distributionId: ${env:CLOUDFRONT_DISTRIBUTION_ID}
+    #       eventType: viewer-request
+    #       pathPattern: "*.html"
+    #       includeBody: false
+  parseAuth:
+    handler: functions/parse-auth.handler
+    name: ${self:custom.stage}-lambda-parse-auth
+    memorySize: 128
+    timeout: 5
+    role: lambdaEdgeRole
+    # events:
+    #   - preExistingCloudFront:
+    #       distributionId: ${env:CLOUDFRONT_DISTRIBUTION_ID}
+    #       eventType: viewer-request
+    #       pathPattern: "*.html"
+    #       includeBody: false
+  refreshAuth:
+    handler: functions/refresh-auth.handler
+    name: ${self:custom.stage}-lambda-refresh-auth
+    memorySize: 128
+    timeout: 5
+    role: lambdaEdgeRole
+    # events:
+    #   - preExistingCloudFront:
+    #       distributionId: ${env:CLOUDFRONT_DISTRIBUTION_ID}
+    #       eventType: viewer-request
+    #       pathPattern: "*.html"
+    #       includeBody: false
+  signOut:
+    handler: functions/sign-out.handler
+    name: ${self:custom.stage}-lambda-sign-out
+    memorySize: 128
+    timeout: 5
+    role: lambdaEdgeRole
+    # events:
+    #   - preExistingCloudFront:
+    #       distributionId: ${env:CLOUDFRONT_DISTRIBUTION_ID}
+    #       eventType: viewer-request
+    #       pathPattern: "*.html"
+    #       includeBody: false
+  httpHeaders:
+    handler: functions/http-headers.handler
+    name: ${self:custom.stage}-lambda-http-headers
     memorySize: 128
     timeout: 5
     role: lambdaEdgeRole
@@ -59,7 +107,7 @@ resources: # CloudFormation template syntax from here on.
     lambdaEdgeRole:
       Type: AWS::IAM::Role
       Properties:
-        RoleName: ${self:custom.stage}-lambda-edge-role
+        RoleName: ${self:custom.stage}-lambda-edge-test-role
         AssumeRolePolicyDocument:
           Version: "2012-10-17"
           Statement:
@@ -83,24 +131,24 @@ resources: # CloudFormation template syntax from here on.
                     - "lambda:*"
                     - "logs:*"
                   Resource: "*"
-    users:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: ${self:custom.global_vars.USERS_TABLE_NAME}
-        AttributeDefinitions:
-          - AttributeName: id
-            AttributeType: S
-          - AttributeName: token
-            AttributeType: S
-          - AttributeName: mylo_token
-            AttributeType: S
-        KeySchema:
-          - AttributeName: id
-            KeyType: HASH
-        BillingMode: PAY_PER_REQUEST
-        StreamSpecification:
-          StreamViewType: NEW_IMAGE
-    deploymentBucket:
-      Type: AWS::S3::Bucket
-      Properties:
-        BucketName: ${self:custom.global_vars.DEPLOYMENT_BUCKET_NAME}
+    # users:
+    #   Type: AWS::DynamoDB::Table
+    #   Properties:
+    #     TableName: ${self:custom.global_vars.USERS_TABLE_NAME}
+    #     AttributeDefinitions:
+    #       - AttributeName: id
+    #         AttributeType: S
+    #       - AttributeName: token
+    #         AttributeType: S
+    #       - AttributeName: mylo_token
+    #         AttributeType: S
+    #     KeySchema:
+    #       - AttributeName: id
+    #         KeyType: HASH
+    #     BillingMode: PAY_PER_REQUEST
+    #     StreamSpecification:
+    #       StreamViewType: NEW_IMAGE
+    # deploymentBucket:
+    #   Type: AWS::S3::Bucket
+    #   Properties:
+    #     BucketName: ${self:custom.global_vars.DEPLOYMENT_BUCKET_NAME}
