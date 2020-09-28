@@ -1,5 +1,6 @@
 const path = require("path");
 const TerserPlugin = require("terser-webpack-plugin");
+const slsw = require("serverless-webpack");
 
 module.exports = {
   mode: "production",
@@ -7,28 +8,7 @@ module.exports = {
   node: {
     __dirname: false,
   },
-  entry: {
-    "functions/bundle/parse-auth": path.resolve(
-      __dirname,
-      "./functions/parse-auth.ts"
-    ),
-    "functions/bundle/check-auth": path.resolve(
-      __dirname,
-      "./src/lambda-edge/check-auth.ts"
-    ),
-    "functions/bundle/refresh-auth": path.resolve(
-      __dirname,
-      "./functions/refresh-auth.ts"
-    ),
-    "functions/bundle/http-headers": path.resolve(
-      __dirname,
-      "./functions/http-headers.ts"
-    ),
-    "functions/bundle/sign-out": path.resolve(
-      __dirname,
-      "./functions/sign-out.ts"
-    ),
-  },
+  entry: slsw.lib.entries,
   module: {
     rules: [
       {
@@ -49,7 +29,7 @@ module.exports = {
     extensions: [".ts", ".js"],
   },
   output: {
-    path: path.resolve(__dirname),
+    path: path.resolve(__dirname, ".webpack"),
     filename: "[name].js",
     libraryTarget: "commonjs",
   },
