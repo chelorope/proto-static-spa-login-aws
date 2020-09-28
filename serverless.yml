@@ -47,12 +47,12 @@ functions:
     memorySize: 128
     timeout: 5
     role: lambdaEdgeRole
-    events:
-      - preExistingCloudFront:
-          distributionId: ${env:CLOUDFRONT_DISTRIBUTION_ID}
-          eventType: viewer-request
-          pathPattern: "*.html"
-          includeBody: false
+    # events:
+    #   - preExistingCloudFront:
+    #       distributionId: ${env:CLOUDFRONT_DISTRIBUTION_ID}
+    #       eventType: viewer-request
+    #       pathPattern: "*.html"
+    #       includeBody: false
 
 resources: # CloudFormation template syntax from here on.
   Resources:
