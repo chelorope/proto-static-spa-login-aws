@@ -1,0 +1,106 @@
+# Welcome to Serverless!
+#
+# This file is the main config file for your service.
+# It's very minimal at this point and uses default values.
+# You can always add more config options for more control.
+# We've included some commented out config examples here.
+# Just uncomment any of them to get that config option.
+#
+# For full config options, check the docs:
+#    docs.serverless.com
+#
+# Happy Coding!
+
+custom:
+  stage: ${opt:stage, self:provider.stage, 'dev'}
+  dotenv:
+    include: []
+  # Global vars
+  global_vars:
+    DEPLOYMENT_BUCKET_NAME: ${self:service}-${self:custom.stage}-serverless-deployment
+    USERS_TABLE_NAME: ${self:service}-${self:custom.stage}-users
+
+service: ${env:SERVICE_NAME}
+
+plugins:
+  - serverless-pseudo-parameters
+  - serverless-dotenv-plugin
+  - serverless-lambda-edge-pre-existing-cloudfront
+  - serverless-webpack
+
+package:
+  individually: true
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: us-east-1
+  profile: ${env:AWS_PROFILE_NAME} # ~/.aws/credentials - https://www.serverless.com/framework/docs/providers/aws/guide/credentials/#setup-with-the-aws-cli
+  role: lambdaTweetsFlowRole
+  deploymentBucket:
+    name: ${self:custom.global_vars.DEPLOYMENT_BUCKET_NAME}
+
+functions:
+  unsupportedRedirectUserRequest:
+    handler: functions/check-auth.handler
+    name: ${self:custom.stage}-lambda-user-request-unsupported-redirect
+    memorySize: 128
+    timeout: 5
+    role: lambdaEdgeRole
+    events:
+      - preExistingCloudFront:
+          distributionId: ${env:CLOUDFRONT_DISTRIBUTION_ID}
+          eventType: viewer-request
+          pathPattern: "*.html"
+          includeBody: false
+
+resources: # CloudFormation template syntax from here on.
+  Resources:
+    lambdaEdgeRole:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: ${self:custom.stage}-lambda-edge-role
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Principal:
+                Service:
+                  - edgelambda.amazonaws.com
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: lambda-edge-policy
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                - Effect: "Allow"
+                  Action:
+                    - "dynamodb:Scan"
+                    - "dynamodb:Query"
+                    - "sns:*"
+                    - "cloudfront:*"
+                    - "lambda:*"
+                    - "logs:*"
+                  Resource: "*"
+    users:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.global_vars.USERS_TABLE_NAME}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: token
+            AttributeType: S
+          - AttributeName: mylo_token
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        StreamSpecification:
+          StreamViewType: NEW_IMAGE
+    deploymentBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.global_vars.DEPLOYMENT_BUCKET_NAME}
