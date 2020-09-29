@@ -3,7 +3,7 @@ import { CompleteConfigFromDisk } from "./functions/shared/shared";
 const test: CompleteConfigFromDisk = {
   userPoolArn:
     "arn:aws:cognito-idp:us-east-1:983532122716:userpool/us-east-1_nuIlGxEzI",
-  clientId: "4jrgkmajnlhv42mprj3mq2197d",
+  clientId: "ut6e2b0tfk94lrjbcnbd56iqc",
   clientSecret: "",
   oauthScopes: [
     "phone",
@@ -12,8 +12,7 @@ const test: CompleteConfigFromDisk = {
     "openid",
     "aws.cognito.signin.user.admin",
   ],
-  cognitoAuthDomain:
-    "auth-bbc5f480-010c-11eb-be6c-0e30af5d4b9f.auth.us-east-1.amazoncognito.com",
+  authDomain: "ciam-ui.kubestage.hearstapps.net",
   redirectPathSignIn: "/parseauth",
   redirectPathSignOut: "/",
   redirectPathAuthRefresh: "/refreshauth",

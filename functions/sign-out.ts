@@ -66,9 +66,9 @@ export const handler: CloudFrontRequestHandler = async (event) => {
       location: [
         {
           key: "location",
-          value: `https://${
-            CONFIG.cognitoAuthDomain
-          }/logout?${stringifyQueryString(qs)}`,
+          value: `https://${CONFIG.authDomain}/logout?${stringifyQueryString(
+            qs
+          )}`,
         },
       ],
       "set-cookie": generateCookieHeaders.signOut({

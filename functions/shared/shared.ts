@@ -67,7 +67,7 @@ export interface CompleteConfigFromDisk extends ConfigFromDisk {
   userPoolArn: string;
   clientId: string;
   oauthScopes: string[];
-  cognitoAuthDomain: string;
+  authDomain: string;
   redirectPathSignIn: string;
   redirectPathSignOut: string;
   redirectPathAuthRefresh: string;

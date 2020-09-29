@@ -143,7 +143,7 @@ export const handler: CloudFrontRequestHandler = async (event) => {
         location: [
           {
             key: "location",
-            value: `https://${CONFIG.cognitoAuthDomain}/oauth2/authorize?${loginQueryString}`,
+            value: `https://${CONFIG.authDomain}/login?${loginQueryString}`,
           },
         ],
         "set-cookie": [

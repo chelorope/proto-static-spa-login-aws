@@ -74,7 +74,7 @@ export const handler: CloudFrontRequestHandler = async (event) => {
         refresh_token: refreshToken,
       });
       const res = await httpPostWithRetry(
-        `https://${CONFIG.cognitoAuthDomain}/oauth2/token`,
+        `https://${CONFIG.authDomain}/oauth2/token`,
         body,
         { headers },
         CONFIG.logger

@@ -47,60 +47,60 @@ functions:
     memorySize: 128
     timeout: 5
     role: lambdaEdgeRole
-    # events:
-    #   - preExistingCloudFront:
-    #       distributionId: ${env:CLOUDFRONT_DISTRIBUTION_ID}
-    #       eventType: viewer-request
-    #       pathPattern: "*.html"
-    #       includeBody: false
+    events:
+      - preExistingCloudFront:
+          distributionId: ${env:CLOUDFRONT_DISTRIBUTION_ID}
+          eventType: viewer-request
+          pathPattern: "*"
+          includeBody: false
   parseAuth:
     handler: functions/parse-auth.handler
     name: ${self:custom.stage}-lambda-parse-auth
     memorySize: 128
     timeout: 5
     role: lambdaEdgeRole
-    # events:
-    #   - preExistingCloudFront:
-    #       distributionId: ${env:CLOUDFRONT_DISTRIBUTION_ID}
-    #       eventType: viewer-request
-    #       pathPattern: "*.html"
-    #       includeBody: false
+    events:
+      - preExistingCloudFront:
+          distributionId: ${env:CLOUDFRONT_DISTRIBUTION_ID}
+          eventType: viewer-request
+          pathPattern: "/parseauth"
+          includeBody: false
   refreshAuth:
     handler: functions/refresh-auth.handler
     name: ${self:custom.stage}-lambda-refresh-auth
     memorySize: 128
     timeout: 5
     role: lambdaEdgeRole
-    # events:
-    #   - preExistingCloudFront:
-    #       distributionId: ${env:CLOUDFRONT_DISTRIBUTION_ID}
-    #       eventType: viewer-request
-    #       pathPattern: "*.html"
-    #       includeBody: false
+    events:
+      - preExistingCloudFront:
+          distributionId: ${env:CLOUDFRONT_DISTRIBUTION_ID}
+          eventType: viewer-request
+          pathPattern: "/refreshauth"
+          includeBody: false
   signOut:
     handler: functions/sign-out.handler
     name: ${self:custom.stage}-lambda-sign-out
     memorySize: 128
     timeout: 5
     role: lambdaEdgeRole
-    # events:
-    #   - preExistingCloudFront:
-    #       distributionId: ${env:CLOUDFRONT_DISTRIBUTION_ID}
-    #       eventType: viewer-request
-    #       pathPattern: "*.html"
-    #       includeBody: false
+    events:
+      - preExistingCloudFront:
+          distributionId: ${env:CLOUDFRONT_DISTRIBUTION_ID}
+          eventType: viewer-request
+          pathPattern: "signout"
+          includeBody: false
   httpHeaders:
     handler: functions/http-headers.handler
     name: ${self:custom.stage}-lambda-http-headers
     memorySize: 128
     timeout: 5
     role: lambdaEdgeRole
-    # events:
-    #   - preExistingCloudFront:
-    #       distributionId: ${env:CLOUDFRONT_DISTRIBUTION_ID}
-    #       eventType: viewer-request
-    #       pathPattern: "*.html"
-    #       includeBody: false
+    events:
+      - preExistingCloudFront:
+          distributionId: ${env:CLOUDFRONT_DISTRIBUTION_ID}
+          eventType: origin-response
+          pathPattern: "*"
+          includeBody: false
 
 resources: # CloudFormation template syntax from here on.
   Resources:
