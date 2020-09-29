@@ -106,7 +106,9 @@ export const handler: CloudFrontRequestHandler = async (event) => {
     CONFIG.logger.debug("Returning request:\n", request);
     return request;
   } catch (err) {
-    CONFIG.logger.info(`Will redirect to Cognito for sign-in because: ${err}`);
+    CONFIG.logger.info(
+      `Will redirect to auth provider for sign-in because: ${err}`
+    );
 
     // Reuse existing state if possible, to be more lenient to users doing parallel sign-in's
     // Users being users, may open the sign-in page in one browser tab, do something else,
@@ -135,7 +137,7 @@ export const handler: CloudFrontRequestHandler = async (event) => {
       code_challenge: state.pkceHash,
     });
 
-    // Return redirect to Cognito Hosted UI for sign-in
+    // Return redirect to auth provider Hosted UI for sign-in
     const response = {
       status: "307",
       statusDescription: "Temporary Redirect",
@@ -143,7 +145,7 @@ export const handler: CloudFrontRequestHandler = async (event) => {
         location: [
           {
             key: "location",
-            value: `https://${CONFIG.authDomain}/login?${loginQueryString}`,
+            value: `https://${CONFIG.authProviderUIDomain}/${CONFIG.authProviderPathSignIn}?${loginQueryString}`,
           },
         ],
         "set-cookie": [

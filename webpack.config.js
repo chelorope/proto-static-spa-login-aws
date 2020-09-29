@@ -1,6 +1,7 @@
 const path = require("path");
 const TerserPlugin = require("terser-webpack-plugin");
 const slsw = require("serverless-webpack");
+const Dotenv = require("dotenv-webpack");
 
 module.exports = {
   mode: "production",
@@ -33,6 +34,7 @@ module.exports = {
     filename: "[name].js",
     libraryTarget: "commonjs",
   },
+  plugins: [new Dotenv()],
   externals: [
     /^aws-sdk/, // Don't include the aws-sdk in bundles as it is already present in the Lambda runtime
   ],

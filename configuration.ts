@@ -1,18 +1,20 @@
 import { CompleteConfigFromDisk } from "./functions/shared/shared";
 
 const test: CompleteConfigFromDisk = {
-  userPoolArn:
-    "arn:aws:cognito-idp:us-east-1:983532122716:userpool/us-east-1_nuIlGxEzI",
   clientId: "ut6e2b0tfk94lrjbcnbd56iqc",
   clientSecret: "",
-  oauthScopes: [
-    "phone",
-    "email",
-    "profile",
-    "openid",
-    "aws.cognito.signin.user.admin",
-  ],
-  authDomain: "ciam-ui.kubestage.hearstapps.net",
+  oauthScopes: ["phone", "email", "profile", "openid"],
+  tokenIssuer: "https://auth.mylo.id",
+  tokenJwksUri: "https://auth.mylo.id/.well-known/jwks.json",
+  authProviderUIDomain: "ciam-ui.kubestage.hearstapps.net",
+  authProviderDomain: "https://auth.mylo.id",
+  pathSignIn: process.env.SIGNIN_PATH || "",
+  pathParseAuth: process.env.PARSEAUTH_PATH || "",
+  pathRefresh: process.env.REFRESH_PATH || "",
+  pathSignout: process.env.SIGNOUT_PATH || "",
+  authProviderPathSignIn: "/login",
+  authProviderPathToken: "/token",
+  authProviderPathLogOut: "/logout",
   redirectPathSignIn: "/parseauth",
   redirectPathSignOut: "/",
   redirectPathAuthRefresh: "/refreshauth",

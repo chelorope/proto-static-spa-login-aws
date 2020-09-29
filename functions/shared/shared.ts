@@ -64,10 +64,17 @@ interface ConfigFromDisk {
 }
 
 export interface CompleteConfigFromDisk extends ConfigFromDisk {
-  userPoolArn: string;
   clientId: string;
   oauthScopes: string[];
-  authDomain: string;
+  authProviderUIDomain: string;
+  authProviderDomain: string;
+  pathSignIn: string;
+  pathParseAuth: string;
+  pathRefresh: string;
+  pathSignout: string;
+  authProviderPathSignIn: string;
+  authProviderPathToken: string;
+  authProviderPathLogOut: string;
   redirectPathSignIn: string;
   redirectPathSignOut: string;
   redirectPathAuthRefresh: string;
@@ -81,10 +88,8 @@ export interface CompleteConfigFromDisk extends ConfigFromDisk {
   pkceLength?: number;
   nonceLength?: number;
   nonceMaxAge?: number;
-}
-
-function isCompleteConfig(config: any): config is CompleteConfigFromDisk {
-  return config["userPoolArn"] !== undefined;
+  tokenIssuer: string;
+  tokenJwksUri: string;
 }
 
 enum LogLevel {
@@ -132,14 +137,12 @@ class Logger {
   }
 }
 
-export interface Config extends ConfigFromDisk {
+export interface Config extends CompleteConfigFromDisk {
   cloudFrontHeaders: CloudFrontHeaders;
   logger: Logger;
 }
 
 export interface CompleteConfig extends Config, CompleteConfigFromDisk {
-  tokenIssuer: string;
-  tokenJwksUri: string;
   cloudFrontHeaders: CloudFrontHeaders;
   secretAllowedCharacters: string;
   pkceLength: number;
@@ -157,16 +160,6 @@ export function getConfig(): Config {
 
 export function getCompleteConfig(): CompleteConfig {
   const config = getConfig();
-
-  if (!isCompleteConfig(config)) {
-    throw new Error("Incomplete config in configuration.json");
-  }
-
-  // Derive the issuer and JWKS uri all JWT's will be signed with from the User Pool's ID and region:
-  const userPoolId = config.userPoolArn.split("/")[1];
-  const userPoolRegion = userPoolId.match(/^(\S+?)_\S+$/)![1];
-  const tokenIssuer = `https://cognito-idp.${userPoolRegion}.amazonaws.com/${userPoolId}`;
-  const tokenJwksUri = `${tokenIssuer}/.well-known/jwks.json`;
 
   // Derive cookie settings by merging the defaults with the explicitly provided values
   const defaultCookieSettings = getDefaultCookieSettings({
@@ -201,8 +194,6 @@ export function getCompleteConfig(): CompleteConfig {
     ...defaults,
     ...config,
     cookieSettings,
-    tokenIssuer,
-    tokenJwksUri,
   };
 }
 

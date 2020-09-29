@@ -28,7 +28,7 @@ export const handler: CloudFrontRequestHandler = async (event) => {
   CONFIG.logger.debug("Event:", event);
   const request = event.Records[0].cf.request;
   const domainName = request.headers["host"][0].value;
-  const cognitoTokenEndpoint = `https://${CONFIG.authDomain}/token`;
+  const authProviderTokenEndpoint = `https://${CONFIG.authProviderDomain}/${CONFIG.authProviderPathToken}`;
   let redirectedFromUri = `https://${domainName}`;
   let idToken: string | undefined = undefined;
   try {
@@ -64,13 +64,13 @@ export const handler: CloudFrontRequestHandler = async (event) => {
       ).toString("base64");
       requestConfig.headers.Authorization = `Basic ${encodedSecret}`;
     }
-    CONFIG.logger.debug("HTTP POST to Cognito token endpoint:\n", {
-      uri: cognitoTokenEndpoint,
+    CONFIG.logger.debug("HTTP POST to Auth Provider token endpoint:\n", {
+      uri: authProviderTokenEndpoint,
       body,
       requestConfig,
     });
     const { status, headers, data: tokens } = await httpPostWithRetry(
-      cognitoTokenEndpoint,
+      authProviderTokenEndpoint,
       body,
       requestConfig,
       CONFIG.logger
@@ -80,7 +80,7 @@ export const handler: CloudFrontRequestHandler = async (event) => {
       );
     });
     CONFIG.logger.info("Successfully exchanged authorization code for tokens");
-    CONFIG.logger.debug("Response from Cognito token endpoint:\n", {
+    CONFIG.logger.debug("Response from Auth Provider token endpoint:\n", {
       status,
       headers,
       tokens,
@@ -182,15 +182,17 @@ function validateQueryStringAndCookies(props: {
   querystring: string;
   cookies: ReturnType<typeof extractAndParseCookies>;
 }) {
-  // Check if Cognito threw an Error. Cognito puts the error in the query string
+  // Check if Auth Provider threw an Error. Auth Provider puts the error in the query string
   const {
     code,
     state,
-    error: cognitoError,
+    error: authProviderError,
     error_description,
   } = parseQueryString(props.querystring);
-  if (cognitoError) {
-    throw new Error(`[Cognito] ${cognitoError}: ${error_description}`);
+  if (authProviderError) {
+    throw new Error(
+      `[AuthProvider] ${authProviderError}: ${error_description}`
+    );
   }
 
   // The querystring needs to have an authorization code and state

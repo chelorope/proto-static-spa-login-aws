@@ -66,9 +66,9 @@ export const handler: CloudFrontRequestHandler = async (event) => {
       location: [
         {
           key: "location",
-          value: `https://${CONFIG.authDomain}/logout?${stringifyQueryString(
-            qs
-          )}`,
+          value: `https://${CONFIG.authProviderDomain}/${
+            CONFIG.authProviderPathLogOut
+          }?${stringifyQueryString(qs)}`,
         },
       ],
       "set-cookie": generateCookieHeaders.signOut({

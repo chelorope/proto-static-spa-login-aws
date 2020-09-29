@@ -74,7 +74,7 @@ export const handler: CloudFrontRequestHandler = async (event) => {
         refresh_token: refreshToken,
       });
       const res = await httpPostWithRetry(
-        `https://${CONFIG.authDomain}/oauth2/token`,
+        `https://${CONFIG.authProviderDomain}/${CONFIG.authProviderPathToken}`,
         body,
         { headers },
         CONFIG.logger
